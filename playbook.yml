@@ -1,0 +1,44 @@
+- hosts: localhost
+  connection: local
+  become: true
+  vars:
+    ansible_python_interpreter: "/usr/bin/env python3"
+   tasks:
+   
+   
+     - name: "Installing Dependencies"
+       apt:
+         name: "{{ item }}"
+         update_cache: yes
+       with_items:
+         - "aptitude"
+         - "apt-transport-https"
+         - "ca-certificates"
+         - "curl"
+         - "software-properties-common"
+         
+         
+     - name: "Adding Docker apt key"
+       apt_key:
+         url: https://download.docker.com/linux/ubuntu/gpg
+         state: present
+         
+         
+     - name: "Adding Docker apt repository"
+       apt_repository:
+         repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+         state: present
+         filenam: docker
+         
+         
+     - name: "Installing docker-ce"
+       apt:
+         name: "docker-ce"
+         state: latest
+         update_cache: true
+         
+         
+     - name: "Starting Docker Service"
+       service: 
+         name: docker-ce
+         state: started
